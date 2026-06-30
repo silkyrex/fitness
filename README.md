@@ -41,6 +41,28 @@ One row per exercise. Linked to Workout Log via relation — lets you filter by 
 3. Paste into Claude with "log this workout"
 4. Claude creates one row in Workout Log + one row per exercise in Sets Log
 
+### Body Metrics
+One row per weigh-in from the Renpho scale.
+
+| Property | Type |
+|---|---|
+| Date | Title |
+| Weight | Number (lb) |
+| BMI | Number |
+| Body Fat Pct / Mass | Number |
+| Skeletal Muscle Pct / Mass | Number |
+| Visceral Fat | Number |
+| BMR | Number (kcal) |
+| Metabolic Age | Number |
+| Fat-Free Mass | Number (lb) |
+| Muscle Mass | Number (lb) |
+| Bone Mass | Number (lb) |
+| Body Water Pct | Number |
+| Protein Pct | Number |
+| Source | Select (Renpho / Manual) |
+
+**URL:** https://app.notion.com/p/a36282227ee24758a46f9dbdad0c08a2
+
 ## Known Issues
 
 - Sets Log date property is named `date:Date:start` — rename it to `Date` manually in Notion for cleaner display
