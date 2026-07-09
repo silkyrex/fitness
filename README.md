@@ -1,6 +1,6 @@
 # fitness
 
-Workout tracking system — logs sessions from the Strong app into Notion.
+Three data sources: Strong (workouts), Renpho (body comp), Oura (recovery/sleep).
 
 ## Notion Schema
 
@@ -62,6 +62,47 @@ One row per weigh-in from the Renpho scale.
 | Source | Select (Renpho / Manual) |
 
 **URL:** https://app.notion.com/p/a36282227ee24758a46f9dbdad0c08a2
+
+## Oura Integration
+
+Sync script: `scripts/oura_sync.py` pulls all daily Oura API v2 data into Notion Daily Log and refreshes `data/oura/` JSON caches.
+
+### Usage
+
+```bash
+python3 scripts/oura_sync.py                         # yesterday + today
+python3 scripts/oura_sync.py --date 2026-06-29       # single day
+python3 scripts/oura_sync.py --start 2026-06-01 --end 2026-06-30
+python3 scripts/oura_sync.py --all                   # backfill from 2026-04-01
+python3 scripts/oura_sync.py --dry-run
+```
+
+Credentials: `~/.config/credentials/oura.env` (`OURA_PAT`), `notion.env` (`NOTION_API_KEY`).
+
+### API sources (16 calls per run, heartrate chunked by week)
+
+| Endpoint | Notion destination |
+|---|---|
+| `daily_readiness` | Readiness, HRV Balance, Resting HR, Body Temp Dev, Activity/Sleep Balance, Recovery Index, etc. |
+| `daily_sleep` | Sleep Score + contributor scores |
+| `sleep` | Stage hours, latency, efficiency, bedtime, sleep HR/HRV |
+| `daily_activity` | Steps, calories, activity minutes, sedentary time |
+| `daily_spo2` | SpO2 Avg, Breathing Disturbance Index |
+| `daily_stress` | Stress (min), Recovery High (min), day summary |
+| `daily_resilience` | Resilience contributors + level (when available) |
+| `daily_cardiovascular_age` | Vascular Age |
+| `vO2_max` | Raw JSON on page (no scalar column yet) |
+| `heartrate` | Avg HR + min/max summary in page JSON; full series in `data/oura/heartrate.json` |
+| `workout`, `session`, `tag`, `enhanced_tag`, `sleep_time`, `rest_mode_period` | Raw JSON on page when present |
+| `personal_info` | Cached to `data/oura/personal_info.json` |
+
+Each Notion page gets all scalar fields mapped to existing DB columns plus a code block (`OURA_RAW:`) with the full daily JSON payload.
+
+Minute-level HR time series are too large for Notion blocks; they live in `data/oura/heartrate.json` only.
+
+### Local JSON cache (`data/oura/`)
+
+Refreshed on every sync run. Key files: `daily_readiness.json`, `daily_sleep.json`, `sleep_detail.json`, `daily_activity.json`, `daily_stress.json`, `daily_spo2.json`, `heartrate.json`, `personal_info.json`, plus endpoint files for optional data.
 
 ## Known Issues
 
