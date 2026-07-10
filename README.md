@@ -63,6 +63,27 @@ One row per weigh-in from the Renpho scale.
 
 **URL:** https://app.notion.com/p/a36282227ee24758a46f9dbdad0c08a2
 
+### Renpho Integration
+
+Sync script: `~/.local/bin/renpho` imports a Renpho CSV export into Notion Body Metrics and refreshes `data/renpho_history.json`.
+
+### Usage
+
+```bash
+renpho                                    # interactive: finds CSV in Downloads
+renpho --file ~/Downloads/RENPHO*.csv    # specific file
+renpho --file PATH --all --yes            # non-interactive backfill
+```
+
+Workflow:
+1. Renpho app → Me → Data Export → CSV (AirDrop to Mac)
+2. Run `renpho`
+3. Choose latest or all measurements
+
+Credentials: `~/.config/credentials/notion.env` (`NOTION_API_KEY`).
+
+**Setup:** share the Body Metrics database with your Notion integration (Connections in Notion). Without this, `renpho` returns 404.
+
 ## Oura Integration
 
 Sync script: `scripts/oura_sync.py` pulls all daily Oura API v2 data into Notion Daily Log and refreshes `data/oura/` JSON caches.
